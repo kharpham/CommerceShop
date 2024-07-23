@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Custom Apps
     'core',
+    'userauths',
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,5 @@ JAZZMIN_SETTINGS = {
     'site_logo': "assets/imgs/theme/loading.gif",
     'copyright': "kha-shop.com",
 }
+
+AUTH_USER_MODEL = 'userauths.User'
