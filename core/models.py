@@ -79,7 +79,8 @@ class Product(models.Model):
     description = models.TextField(null=True, blank=True, default="This is the product")
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
 
     price = models.DecimalField(max_digits=6, decimal_places=2, default="1.99")
     old_price = models.DecimalField(max_digits=6, decimal_places=2, default="2.99")
@@ -105,7 +106,7 @@ class Product(models.Model):
         return self.title
     
     def get_percentage(self):
-        new_price = self.price / self.old_price * 100
+        new_price = (self.old_price - self.price) / self.old_price * 100
         return new_price
 
 class ProductImage(models.Model):
