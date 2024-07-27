@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
 
 # Create your views here.
@@ -20,3 +20,14 @@ def category_list_view(request):
     categories = Category.objects.all()
     return render(request, 'core/category-list.html', {"categories": categories})
 
+def product_list_view_with_category(request, cid):
+    try:
+        category = Category.objects.get(cid=cid)
+        products = Product.objects.filter(product_status="published", category=category)
+        return render(request, "core/category-product-list.html", {
+            "category": category,
+            "products": products,
+        })
+    except Category.DoesNotExist:
+        raise Http404("Category not found")
+        
