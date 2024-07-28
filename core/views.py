@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -45,3 +46,12 @@ def vendor_detail_view(request, vid):
             })
     except Vendor.DoesNotExist:
         raise Http404("Vendor not found.")
+
+@login_required(login_url="userauths:sign-in")
+def product_detail_view(request, pid):
+    product = get_object_or_404(Product, pid=pid)
+    vendor = product.vendor
+    return render(request, "core/product-detail.html", {
+        "product": product,
+        "vendor": vendor,
+    })
