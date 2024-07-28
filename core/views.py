@@ -29,8 +29,19 @@ def product_list_view_with_category(request, cid):
             "products": products,
         })
     except Category.DoesNotExist:
-        raise Http404("Category not found")
+        raise Http404("Category not found.")
         
 def vendor_list_view(request):
     vendors = Vendor.objects.all()
     return render(request, "core/vendor-list.html", {"vendors": vendors})
+
+def vendor_detail_view(request, vid):
+    try:
+        vendor = Vendor.objects.get(vid=vid)
+        products = Product.objects.filter(vendor=vendor, product_status="published")
+        return render(request, "core/vendor-detail.html", {
+            "vendor": vendor,
+            "products": products,
+            })
+    except Vendor.DoesNotExist:
+        raise Http404("Vendor not found.")
