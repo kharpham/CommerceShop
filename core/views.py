@@ -50,8 +50,12 @@ def vendor_detail_view(request, vid):
 @login_required(login_url="userauths:sign-in")
 def product_detail_view(request, pid):
     product = get_object_or_404(Product, pid=pid)
+    products = Product.objects.filter(category=product.category).exclude(pid=pid)
+    p_image = product.product_images.all()
     vendor = product.vendor
     return render(request, "core/product-detail.html", {
         "product": product,
         "vendor": vendor,
+        "products": products,
+        "p_image": p_image,
     })

@@ -162,7 +162,7 @@
                 <div class="col-12">
                     <div class="shop-product-fillter">
                         <div class="totall-product">
-                            <p>We found <strong class="text-brand">29</strong> items for you!</p>
+                            <p>We found <strong class="text-brand">{{products.count}}</strong> items for you!</p>
                         </div>
                         <div class="sort-by-product-area">
                             <div class="sort-by-cover mr-10">
@@ -211,7 +211,7 @@
                             <div class="product-cart-wrap mb-30">
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
-                                        <a href="shop-product-right.html">
+                                        <a href="{% url 'core:product-detail' product.pid %}">
                                             <img class="default-img" src="{{ product.image.url }}" alt="" />
                                             <img class="hover-img" src="{{ product.image.url }}" alt="" />
                                         </a>
@@ -227,9 +227,9 @@
                                 </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
-                                        <a href="shop-grid-right.html">{{product.category}}</a>
+                                        <a href="{% url 'core:product-list-with-category' product.category.cid %}">{{product.category}}</a>
                                     </div>
-                                    <h2><a href="shop-product-right.html">{{product.title}}</a></h2>
+                                    <h2><a href="{% url 'core:product-detail' product.pid %}">{{product.title}}</a></h2>
                                     <div class="product-rate-cover">
                                         <div class="product-rate d-inline-block">
                                             <div class="product-rating" style="width: 90%"></div>
@@ -237,7 +237,7 @@
                                         <span class="font-small ml-5 text-muted"> (4.0)</span>
                                     </div>
                                     <div>
-                                        <span class="font-small text-muted">By <a href="vendor-details-1.html">{{product.vendor}}</a></span>
+                                        <span class="font-small text-muted">By <a href="{% url 'core:vendor-detail' product.vendor.vid %}">{{product.vendor}}</a></span>
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">
