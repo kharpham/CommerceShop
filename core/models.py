@@ -3,6 +3,7 @@ from shortuuid.django_fields import ShortUUIDField
 from django.utils.html import mark_safe
 from userauths.models import User
 from taggit.managers import TaggableManager
+from django_ckeditor_5.fields import CKEditor5Field
 
 STATUS_CHOICES = (
     ("process", "Processing"),
@@ -49,8 +50,8 @@ class Vendor(models.Model):
     title = models.CharField(max_length=255, default="New vendor")
     image = models.ImageField(upload_to=user_directory_path, default="vendor.jpg")
     cover_image = models.ImageField(upload_to=user_directory_path, default="vendor.jpg")
-    description = models.TextField(null=True, blank=True, default="This is the new vendor")
-
+    # description = models.TextField(null=True, blank=True, default="This is the new vendor")
+    description = CKEditor5Field(null=True, blank=True, default="This is the new vendor", config_name="extends")
 
     address = models.CharField(max_length=255, default="123 Main Street.")
     contact = models.CharField(max_length=255, default="+123 (456) 789")
@@ -79,7 +80,8 @@ class Product(models.Model):
 
     title = models.CharField(max_length=255, default="New product")
     image = models.ImageField(upload_to=user_directory_path, default="product.jpg")
-    description = models.TextField(null=True, blank=True, default="This is the product")
+    # description = models.TextField(null=True, blank=True, default="This is the product")
+    description = CKEditor5Field(null=True, blank=True, default="This is the new product", config_name="extends")
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
@@ -88,7 +90,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2, default="1.99")
     old_price = models.DecimalField(max_digits=6, decimal_places=2, default="2.99")
 
-    specifications = models.TextField(null=True, blank=True)
+    # specifications = models.TextField(null=True, blank=True)
+    specifications = CKEditor5Field(null=True, blank=True, config_name="extends")
     type = models.CharField(max_length=255, default="Organic", null=True, blank=True)
     stock = models.IntegerField(default=10, null=True, blank=True)
     life = models.CharField(max_length=100, default="100 Days", null=True, blank=True)
