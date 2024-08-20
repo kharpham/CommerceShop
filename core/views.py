@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
+from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -58,4 +59,15 @@ def product_detail_view(request, pid):
         "vendor": vendor,
         "products": products,
         "p_image": p_image,
+    })
+
+def tag_list(request, tag_slug=None):
+    products = Product.objects.filter(product_status="published").order_by("-id")
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        products = products.filter(tags__in=[tag])
+    return render(request, "core/tag.html", {
+        "products": products,
+        "tag": tag,
     })
