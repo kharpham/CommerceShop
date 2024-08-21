@@ -194,7 +194,7 @@
                         id="Reviews-tab"
                         data-bs-toggle="tab"
                         href="#Reviews"
-                        >Reviews (3)</a
+                        >Reviews ({{reviews.count}})</a
                       >
                     </li>
                   </ul>
@@ -356,6 +356,7 @@
                           <div class="col-lg-8">
                             <h4 class="mb-30">Customer questions & answers</h4>
                             <div class="comment-list">
+                              {% for review in reviews %}
                               <div
                                 class="single-comment justify-content-between d-flex mb-30"
                               >
@@ -364,11 +365,11 @@
                                 >
                                   <div class="thumb text-center">
                                     <img
-                                      src="{% static 'assets/imgs/blog/author-2.png' %}"
+                                      src="https://th.bing.com/th/id/OIP.PoS7waY4-VeqgNuBSxVUogAAAA?rs=1&pid=ImgDetMain"
                                       alt=""
                                     />
                                     <a href="#" class="font-heading text-brand"
-                                      >Sienna</a
+                                      >{{review.user}}</a
                                     >
                                   </div>
                                   <div class="desc">
@@ -377,117 +378,24 @@
                                     >
                                       <div class="d-flex align-items-center">
                                         <span class="font-xs text-muted"
-                                          >December 4, 2022 at 3:12 pm
+                                          >{{review.date|date:"d M, Y"}}
                                         </span>
                                       </div>
-                                      <div class="product-rate d-inline-block">
+                                      {% comment %} <div class="product-rate d-inline-block">
                                         <div
                                           class="product-rating"
-                                          style="width: 100%"
+                                          style="width: {{review.rating|multiply:}}%"
                                         ></div>
-                                      </div>
+                                      </div> {% endcomment %}
                                     </div>
                                     <p class="mb-10">
-                                      Lorem ipsum dolor sit amet, consectetur
-                                      adipisicing elit. Delectus, suscipit
-                                      exercitationem accusantium obcaecati quos
-                                      voluptate nesciunt facilis itaque modi
-                                      commodi dignissimos sequi repudiandae
-                                      minus ab deleniti totam officia id
-                                      incidunt?
+                                      {{review.review}}
                                       <a href="#" class="reply">Reply</a>
                                     </p>
                                   </div>
                                 </div>
                               </div>
-                              <div
-                                class="single-comment justify-content-between d-flex mb-30 ml-30"
-                              >
-                                <div
-                                  class="user justify-content-between d-flex"
-                                >
-                                  <div class="thumb text-center">
-                                    <img
-                                      src="{% static 'assets/imgs/blog/author-3.png' %}"
-                                      alt=""
-                                    />
-                                    <a href="#" class="font-heading text-brand"
-                                      >Brenna</a
-                                    >
-                                  </div>
-                                  <div class="desc">
-                                    <div
-                                      class="d-flex justify-content-between mb-10"
-                                    >
-                                      <div class="d-flex align-items-center">
-                                        <span class="font-xs text-muted"
-                                          >December 4, 2022 at 3:12 pm
-                                        </span>
-                                      </div>
-                                      <div class="product-rate d-inline-block">
-                                        <div
-                                          class="product-rating"
-                                          style="width: 80%"
-                                        ></div>
-                                      </div>
-                                    </div>
-                                    <p class="mb-10">
-                                      Lorem ipsum dolor sit amet, consectetur
-                                      adipisicing elit. Delectus, suscipit
-                                      exercitationem accusantium obcaecati quos
-                                      voluptate nesciunt facilis itaque modi
-                                      commodi dignissimos sequi repudiandae
-                                      minus ab deleniti totam officia id
-                                      incidunt?
-                                      <a href="#" class="reply">Reply</a>
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                class="single-comment justify-content-between d-flex"
-                              >
-                                <div
-                                  class="user justify-content-between d-flex"
-                                >
-                                  <div class="thumb text-center">
-                                    <img
-                                      src="{% static 'assets/imgs/blog/author-4.png' %}"
-                                      alt=""
-                                    />
-                                    <a href="#" class="font-heading text-brand"
-                                      >Gemma</a
-                                    >
-                                  </div>
-                                  <div class="desc">
-                                    <div
-                                      class="d-flex justify-content-between mb-10"
-                                    >
-                                      <div class="d-flex align-items-center">
-                                        <span class="font-xs text-muted"
-                                          >December 4, 2022 at 3:12 pm
-                                        </span>
-                                      </div>
-                                      <div class="product-rate d-inline-block">
-                                        <div
-                                          class="product-rating"
-                                          style="width: 80%"
-                                        ></div>
-                                      </div>
-                                    </div>
-                                    <p class="mb-10">
-                                      Lorem ipsum dolor sit amet, consectetur
-                                      adipisicing elit. Delectus, suscipit
-                                      exercitationem accusantium obcaecati quos
-                                      voluptate nesciunt facilis itaque modi
-                                      commodi dignissimos sequi repudiandae
-                                      minus ab deleniti totam officia id
-                                      incidunt?
-                                      <a href="#" class="reply">Reply</a>
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
+                              {% endfor %}
                             </div>
                           </div>
                           <div class="col-lg-4">
@@ -499,7 +407,7 @@
                                   style="width: 90%"
                                 ></div>
                               </div>
-                              <h6>4.8 out of 5</h6>
+                              <h6>{{average_rating.rating|floatformat:1}} out of 5</h6>
                             </div>
                             <div class="progress">
                               <span>5 star</span>

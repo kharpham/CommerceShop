@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
+from django.db.models import Avg
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 def index(request):
@@ -52,6 +54,8 @@ def vendor_detail_view(request, vid):
 def product_detail_view(request, pid):
     product = get_object_or_404(Product, pid=pid)
     products = Product.objects.filter(category=product.category).exclude(pid=pid)
+    reviews = product.reviews.all().order_by("-date")
+    average_rating = reviews.aggregate(rating=Avg('rating'))
     p_image = product.product_images.all()
     vendor = product.vendor
     return render(request, "core/product-detail.html", {
@@ -59,6 +63,8 @@ def product_detail_view(request, pid):
         "vendor": vendor,
         "products": products,
         "p_image": p_image,
+        "reviews": reviews,
+        "average_rating": average_rating,
     })
 
 def tag_list(request, tag_slug=None):
