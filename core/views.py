@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.db.models import Avg
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
+from core.forms import ProductReviewForm
+
+
 
 
 # Create your views here.
@@ -54,10 +57,20 @@ def vendor_detail_view(request, vid):
 def product_detail_view(request, pid):
     product = get_object_or_404(Product, pid=pid)
     products = Product.objects.filter(category=product.category).exclude(pid=pid)
+    
+    # Get all reviews of the product
     reviews = product.reviews.all().order_by("-date")
+
+    #Get average rating of the product
     average_rating = reviews.aggregate(rating=Avg('rating'))
+
     p_image = product.product_images.all()
     vendor = product.vendor
+
+    # Product review form
+    review_form = ProductReviewForm()
+
+
     return render(request, "core/product-detail.html", {
         "product": product,
         "vendor": vendor,
@@ -65,6 +78,7 @@ def product_detail_view(request, pid):
         "p_image": p_image,
         "reviews": reviews,
         "average_rating": average_rating,
+        "review_form": review_form
     })
 
 def tag_list(request, tag_slug=None):
@@ -76,4 +90,29 @@ def tag_list(request, tag_slug=None):
     return render(request, "core/tag.html", {
         "products": products,
         "tag": tag,
+    })
+
+@login_required(login_url="userauths:sign-in")
+def ajax_add_review(request, pid):
+    product = Product.objects.get(pid=pid)
+    user = request.user
+
+    review = ProductReview.objects.create(
+        user=user,
+        product=product,
+        review=request.POST['review'],
+        rating=request.POST['rating']
+    )
+    
+    context = {
+        'user': user.username,
+        'review': request.POST['review'],
+        'rating': request.POST['rating'],
+    }
+    average_rating = product.reviews.all().aggregate(rating=Avg("rating"))
+
+    return JsonResponse({
+        'bool': True,
+        'context': context,
+        'average_rating': average_rating,
     })
