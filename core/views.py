@@ -53,7 +53,7 @@ def vendor_detail_view(request, vid):
     except Vendor.DoesNotExist:
         raise Http404("Vendor not found.")
 
-@login_required(login_url="userauths:sign-in")
+# @login_required(login_url="userauths:sign-in")
 def product_detail_view(request, pid):
     product = get_object_or_404(Product, pid=pid)
     products = Product.objects.filter(category=product.category).exclude(pid=pid)
@@ -70,7 +70,12 @@ def product_detail_view(request, pid):
     # Product review form
     review_form = ProductReviewForm()
 
-
+    is_authenticated = request.user.is_authenticated
+    allow_to_add_review = True
+    if is_authenticated:
+        user_review_count = reviews.filter(user=request.user, product=product).count()
+        if user_review_count > 0:
+            allow_to_add_review = False
     return render(request, "core/product-detail.html", {
         "product": product,
         "vendor": vendor,
@@ -78,11 +83,13 @@ def product_detail_view(request, pid):
         "p_image": p_image,
         "reviews": reviews,
         "average_rating": average_rating,
-        "review_form": review_form
+        "review_form": review_form,
+        "is_logged_in": is_authenticated,
+        "allow_to_add_review": allow_to_add_review,
     })
 
 def tag_list(request, tag_slug=None):
-    products = Product.objects.filter(product_status="published").order_by("-id")
+    products = Product.filter(product_status="published").order_by("-id")
     tag = None
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
@@ -115,4 +122,5 @@ def ajax_add_review(request, pid):
         'bool': True,
         'context': context,
         'average_rating': average_rating,
+        'date': review.date.strftime('%d %B, %Y'),
     })
