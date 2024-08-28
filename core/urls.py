@@ -23,4 +23,7 @@ urlpatterns = [
 
     # Add Review
     path("ajax-add-review/<str:pid>", views.ajax_add_review, name="ajax-add-review"),
+
+    # Search
+    path("search/", views.search_view, name="search"),
 ]

@@ -124,3 +124,14 @@ def ajax_add_review(request, pid):
         'average_rating': average_rating,
         'date': review.date.strftime('%d %B, %Y'),
     })
+
+def search_view(request):
+    query = request.GET["q"]
+
+    products = Product.objects.filter(title__icontains=query, description__icontains=query).order_by("-date") 
+    context = {
+        "products": products,
+        "query": query,
+    }
+
+    return render(request, "core/search.html", context)
