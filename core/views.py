@@ -128,7 +128,7 @@ def ajax_add_review(request, pid):
 def search_view(request):
     query = request.GET["q"]
 
-    products = Product.objects.filter(title__icontains=query, description__icontains=query).order_by("-date") 
+    products = Product.objects.filter(title__icontains=query).order_by("-date") 
     context = {
         "products": products,
         "query": query,
