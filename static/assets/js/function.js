@@ -72,6 +72,19 @@ $(document).ready(function () {
         })
       );
     });
-    console.log(filterObject);
+    $.ajax({
+      url: '/filtered-products',
+      data: filterObject,
+      dataType: 'json',
+      beforeSend: function() {
+        console.log("Filtering products...");
+      },
+      success: function(response) {
+        console.log(response);
+        $("#filtered-products").html(response.data);
+        $("#product-count").text(response.product_count);
+        console.log("Data filtered successfully...");
+      }
+    })
   });
 });

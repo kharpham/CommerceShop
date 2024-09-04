@@ -26,4 +26,9 @@ urlpatterns = [
 
     # Search
     path("search/", views.search_view, name="search"),
+
+    # Filter
+    path("filtered-products/", views.filter_product, name="filter"),
+
+    
 ]

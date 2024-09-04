@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404, JsonResponse
 from django.db.models import Avg
+from django.template.loader import render_to_string
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
+
 
 
 
@@ -135,3 +137,21 @@ def search_view(request):
     }
 
     return render(request, "core/search.html", context)
+
+def filter_product(request):
+    categories = request.GET.getlist('category[]')
+    vendors = request.GET.getlist('vendor[]')
+
+    products = Product.objects.filter(product_status="published").order_by("-id")
+
+    if len(categories) > 0:
+        products = products.filter(category__cid__in=categories).distinct()
+    if len(vendors) > 0:
+        products = products.filter(vendor__vid__in=vendors).distinct()
+
+    data = render_to_string("core/async/product-list.html", {
+        "products": products,
+    })
+    return JsonResponse({"data": data, "product_count": len(products)})
+    
+
