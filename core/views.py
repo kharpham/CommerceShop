@@ -21,7 +21,7 @@ def index(request):
     })
 
 def product_list_view(request):
-    products = Product.objects.filter(product_status="published")
+    products = Product.objects.filter(product_status="published").order_by("-id")
     return render(request, 'core/product-list.html', {
         "products": products, 
     })
@@ -146,7 +146,7 @@ def filter_product(request):
     min_price = request.GET['min_price']
     max_price = request.GET['max_price']
 
-    products = Product.objects.filter(product_status="published").order_by("-id")
+    products = Product.objects.filter(product_status="published").order_by("-id", "date")
     products = products.filter(price__gte=min_price).filter(price__lte=math.ceil(float(max_price)))
 
     if len(categories) > 0:

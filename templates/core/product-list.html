@@ -120,13 +120,13 @@
                                     <div class="sidebar-widget price_range range">
                                         <div class="price-filter mb-20">
                                             <div class="price-filter-inner">
-                                                <input type="range" id="range" value="{{min_max_price.price__min|floatformat:2}}" class="slider-range" min="{{min_max_price.price__min}}" max="{{min_max_price.price__max}}" oninput="max_price.value=this.value"> 
+                                                <input type="range" id="range" value="{{min_max_price.price__max|floatformat:2}}" class="slider-range" min="{{min_max_price.price__min}}" max="{{min_max_price.price__max}}" oninput="max_price.value=this.value"> 
                                                 <div class="d-flex justify-content-between">
                                                     <div class="caption">From: <strong id="slider-range-value1" class="text-brand">${{min_max_price.price__min|floatformat:2}}</strong></div>
                                                     <div class="caption">To: <strong id="slider-range-value2" class="text-brand">${{min_max_price.price__max|floatformat:2}}</strong></div>
                                                 </div>
                                                 {% comment %} <input type="number" value="{{min_max_price.price__min|floatformat:2}}" id="max_price" min="{{min_max_price.price__min}}" max="{{min_max_price.price__max|floatformat:2}}" placeholder="Current Price" onkeyup="range.value=this.value"> {% endcomment %}
-                                                <input type="number" value="{{min_max_price.price__min|floatformat:2}}" id="max_price" min="{{min_max_price.price__min|floatformat:2}}" max="{{min_max_price.price__max|floatformat:2}}" placeholder="Current Price" onkeyup="range.value=this.value">
+                                                <input type="number" value="{{min_max_price.price__max|floatformat:2}}" id="max_price" min="{{min_max_price.price__min|floatformat:2}}" max="{{min_max_price.price__max|floatformat:2}}" placeholder="Current Price" onkeyup="range.value=this.value">
                                             </div>
                                         </div>
                                         <div class="custome-checkbox">
@@ -199,7 +199,7 @@
                                     <div class="product-action-1">
                                         <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                         <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                        <a aria-label="Quick view" href="{% url 'core:product-detail' product.pid %}" class="action-btn"><i class="fi-rs-eye"></i></a>
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">-{{product.get_percentage|floatformat:0}}%</span>
