@@ -6,6 +6,7 @@ from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, Wis
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
+import math
 
 
 
@@ -142,7 +143,11 @@ def filter_product(request):
     categories = request.GET.getlist('category[]')
     vendors = request.GET.getlist('vendor[]')
 
+    min_price = request.GET['min_price']
+    max_price = request.GET['max_price']
+
     products = Product.objects.filter(product_status="published").order_by("-id")
+    products = products.filter(price__gte=min_price).filter(price__lte=math.ceil(float(max_price)))
 
     if len(categories) > 0:
         products = products.filter(category__cid__in=categories).distinct()

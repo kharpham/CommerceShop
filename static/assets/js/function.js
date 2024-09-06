@@ -60,8 +60,13 @@ $("#commentForm").submit(function (event) {
 });
 
 $(document).ready(function () {
-  $(".filter-checkbox").on("click", function () {
-    let filterObject = {};
+  $(".filter-checkbox, #price-filter-button").on("click", function () {
+    let filterObject = {}; 
+    let min_price = $("#max_price").attr("min");
+    let max_price = $("#max_price").val();
+    filterObject.min_price = min_price;
+    filterObject.max_price = max_price;
+
     $(".filter-checkbox").each(function () {
       let filterKey = $(this).data("filter");
       filterObject[filterKey] = (Array.from(
@@ -101,10 +106,9 @@ $(document).ready(function () {
       $(this).val(min_price);
       $(this).focus();
       $("#range").val(min_price);
-
       return false;
     }
-  })
+  })  
 });
 
 

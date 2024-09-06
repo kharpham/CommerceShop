@@ -127,13 +127,11 @@
                                                 </div>
                                                 {% comment %} <input type="number" value="{{min_max_price.price__min|floatformat:2}}" id="max_price" min="{{min_max_price.price__min}}" max="{{min_max_price.price__max|floatformat:2}}" placeholder="Current Price" onkeyup="range.value=this.value"> {% endcomment %}
                                                 <input type="number" value="{{min_max_price.price__min|floatformat:2}}" id="max_price" min="{{min_max_price.price__min|floatformat:2}}" max="{{min_max_price.price__max|floatformat:2}}" placeholder="Current Price" onkeyup="range.value=this.value">
-
-                                                
                                             </div>
                                         </div>
                                         <div class="custome-checkbox">
-                                            <button class="btn mt-20 w-100">Filter</button>
-                                            
+                                            <button class="btn mt-20 w-100" id="price-filter-button">Filter</button>
+    
                                         </div>
                                     </div>
                                 </div>
