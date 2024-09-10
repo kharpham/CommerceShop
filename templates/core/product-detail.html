@@ -25,6 +25,7 @@
                     <div class="product-image-slider">
                       <figure class="border-radius-10">
                         <img src="{{product.image.url}}" alt="product image" />
+                        <input type="hidden" class="product-image-" value="{{product.image.url}}"> 
                       </figure>
                       {% for image in product.product_images.all %}
                       <figure class="border-radius-10">
@@ -67,7 +68,7 @@
                     <div class="clearfix product-price-cover">
                       <div class="product-price primary-color float-left">
                         <span class="current-price text-brand"
-                          ><span>$</span><span id="current-product-price">{{product.price}}</span></span
+                          ><span>$</span><span class="current-product-price-">{{product.price}}</span></span
                         >
                         <span>
                           <span class="save-price font-md color3 ml-15"
@@ -107,12 +108,12 @@
                         ></a>
                       </div> {% endcomment %}
                       
-                      <input type="number" value="1" id="product-quantity" class="w-25 mb-20" min="1"> <br>
+                      <input type="number" value="1" class="w-25 mb-30 product-quantity-" min="1"> <br>
                   
                       <div class="product-extra-link2">
-                        <input type="hidden" value="{{product.pid}}" id="product-pid" name="" id="" >
-                        <input type="hidden" value="{{product.title}}" id="product-title" name="" id="">
-                        <button type="submit" class="button button-add-to-cart" id="add-to-cart-button">
+                        <input type="hidden" value="{{product.pid}}" class="product-pid-" name="" id="" >
+                        <input type="hidden" value="{{product.title}}" class="product-title-" name="" id="">
+                        <button type="submit" class="button add-to-cart-button" data-index="" id="add-to-cart-button">
                           <i class="fi-rs-shopping-cart"></i>Add to cart
                         </button>
                         <a

@@ -165,11 +165,14 @@ def add_to_cart(request):
     pid = request.GET["pid"]
     quantity = int(request.GET["quantity"])
     price = float(request.GET["price"])
+    image = request.GET["image"]
 
     cart_product[pid] = {
         'title': title,
         'quantity': quantity,
         'price': price,
+        'image': image,
+        'pid': pid,
     }
     
     if "cart_data_object" in request.session:

@@ -894,7 +894,7 @@
                       alt="Nest"
                       src="{% static 'assets/imgs/theme/icons/icon-cart.svg' %}"
                     />
-                    <span class="pro-count white">2</span>
+                    <span class="pro-count white cart-items-count ">{{request.session.cart_data_object|length}}</span>
                   </a>
                   <div class="cart-dropdown-wrap cart-dropdown-hm2">
                     <ul>
