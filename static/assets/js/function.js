@@ -120,11 +120,6 @@ $("#add-to-cart-button").on("click", function() {
   let productPrice = $("#current-product-price").text();
   let thisVal = $(this);
 
-  console.log(quantity);
-  console.log(productTitle);
-  console.log(productPid);
-  console.log(productPrice);
-
   $.ajax({
     url: '/add-to-cart',
     data: {
@@ -140,6 +135,7 @@ $("#add-to-cart-button").on("click", function() {
     success: function(response) {
       thisVal.html("Item added");
       console.log("Product added to Cart successfully...");
+      $(".cart-items-count").text(response.total_cart_items)
     }
   })
 })

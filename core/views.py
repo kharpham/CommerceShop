@@ -158,5 +158,28 @@ def filter_product(request):
         "products": products,
     })
     return JsonResponse({"data": data, "product_count": len(products)})
+
+def add_to_cart(request):
+    cart_product = {}
+    title = request.GET["title"]
+    pid = request.GET["pid"]
+    quantity = int(request.GET["quantity"])
+    price = float(request.GET["price"])
+
+    cart_product[pid] = {
+        'title': title,
+        'quantity': quantity,
+        'price': price,
+    }
     
+    if "cart_data_object" in request.session:
+        cart_data = request.session["cart_data_object"]
+        cart_data[pid] = cart_product[pid]
+        # Save the cart data back to the session
+        request.session["cart_data_object"] = cart_data
+    else:
+        request.session["cart_data_object"] = cart_product
+    return JsonResponse({"data": request.session["cart_data_object"], "total_cart_items": len(request.session["cart_data_object"])})
+
+
 
