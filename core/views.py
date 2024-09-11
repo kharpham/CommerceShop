@@ -200,5 +200,23 @@ def cart_view(request):
             'product_amount': product_amount,
     }
     return render(request, "core/cart.html", context)
-    
-    
+
+
+def remove_from_cart(request):
+    pid = request.GET["pid"]
+    cart_data = request.session["cart_data_object"]
+    if pid in cart_data:
+        del cart_data[pid]
+        product_amount = len(cart_data)
+        cart_total_amount = 0
+        for product in cart_data.values():
+            cart_total_amount += product['price'] * product['quantity']
+        request.session["cart_data_object"] = cart_data
+        # Explicitly mark the session as modified
+        request.session.modified = True
+        data = {
+            "product_amount": product_amount,
+            "cart_total_amount": cart_total_amount,
+        }
+        return JsonResponse({"data": data})
+    return JsonResponse({"data": cart_data, "message": "Product PID not found in cart."}, status=404)

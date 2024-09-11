@@ -1,6 +1,6 @@
 {% extends 'partials/base.html' %}
 {% load static %}
-
+{% load custom_tags%}
 {% block content %}
     <!--End header-->
     <main class="main">
@@ -18,7 +18,7 @@
                 <div class="col-lg-8 mb-40">
                     <h1 class="heading-2 mb-10">Your Cart</h1>
                     <div class="d-flex justify-content-between">
-                        <h6 class="text-body">There are <span class="text-brand">{{product_amount}}</span> products in your cart</h6>
+                        <h6 class="text-body">There are <span class="text-brand" id="product-amount">{{product_amount}}</span> products in your cart</h6>
                         <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     {% if product_amount %}
-                    <div class="table-responsive shopping-summery">
+                    <div class="table-responsive shopping-summery" id="cart-table">
     
                         <table class="table table-wishlist">
                             <thead>
@@ -46,7 +46,7 @@
                             </thead>
                             <tbody>
                                 {% for product in cart_data %}
-                                <tr class="pt-30">
+                                <tr class="pt-30" id="product-{{product.pid}}">
                                     <td class="custome-checkbox pl-30">
                                         <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
                                         <label class="form-check-label" for="exampleCheckbox1"></label>
@@ -71,10 +71,10 @@
                                         </div>
                                     </td>
                                     <td class="price" data-title="Price">
-                                        <h4 class="text-brand">$2.51 </h4>
+                                        <h4 class="text-brand">${%multiply product.price product.quantity as result%}{{result|floatformat:2}}</h4>
                                     </td>
                                     <td class="action text-center" data-title="Refresh"><a href="#" class="text-body"><i class="fi-rs-refresh"></i></a></td>
-                                    <td class="action text-center" data-title="Remove"><a href="#" class="text-body"><i class="fi-rs-trash"></i></a></td>
+                                    <td class="action text-center" data-title="Remove"><button style="border: none; background: none;" class="text-body delete-product" data-product={{product.pid}}><i class="fi-rs-trash"></i></button></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -371,17 +371,17 @@
                     </div>
                 </div>
                 {% if product_amount %}
-                <div class="col-lg-4">
+                <div class="col-lg-4" id="cart-bill">
                     <div class="border p-md-4 cart-totals ml-30">
                         <div class="table-responsive">
                             <table class="table no-border">
                                 <tbody>
                                     <tr>
                                         <td class="cart_total_label">
-                                            <h6 class="text-muted">Subtotal</h6>
+                                            <h6 class="text-muted" >Subtotal</h6>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">${{cart_total_amount|floatformat:2}}</h4>
+                                            <h4 class="text-brand text-end" id="cart-subtotal-amount">${{cart_total_amount|floatformat:2}}</h4>
                                         </td>
                                     </tr>
                                     <tr>
@@ -396,7 +396,7 @@
                                             <h6 class="text-muted">Total</h6>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">${{cart_total_amount|floatformat:2}}</h4>
+                                            <h4 class="text-brand text-end" id="cart-total-amount">${{cart_total_amount|floatformat:2}}</h4>
                                         </td>
                                     </tr>
                                 </tbody>

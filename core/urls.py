@@ -35,5 +35,9 @@ urlpatterns = [
 
     # Cart page
     path("cart/", views.cart_view, name="cart"),
+
+    # Remove product from cart
+    path("remove-from-cart/", views.remove_from_cart, name="remove-from-cart"),
+
     
 ]
