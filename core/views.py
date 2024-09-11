@@ -185,4 +185,20 @@ def add_to_cart(request):
     return JsonResponse({"data": request.session["cart_data_object"], "total_cart_items": len(request.session["cart_data_object"])})
 
 
-
+def cart_view(request):
+    cart_total_amount = 0
+    product_amount = 0
+    cart_data = ""
+    if "cart_data_object" in request.session:
+        for pid, item in request.session["cart_data_object"].items():
+            cart_total_amount += item['quantity'] * item['price']
+        product_amount = len(request.session["cart_data_object"])
+        cart_data = reversed(request.session["cart_data_object"].values())
+    context = {
+            'cart_total_amount': cart_total_amount,
+            'cart_data': cart_data,
+            'product_amount': product_amount,
+    }
+    return render(request, "core/cart.html", context)
+    
+    
