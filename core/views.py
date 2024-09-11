@@ -236,3 +236,14 @@ def update_cart(request):
     request.session.modified = True
     return JsonResponse({"data": {"product_subtotal": product_subtotal, "cart_total_amount": cart_total_amount}})
 
+def checkout(request):
+    cart_total_amount = 0
+    if "cart_data_object" in request.session:
+        cart_data = request.session["cart_data_object"]
+        for product in cart_data.values():
+            cart_total_amount += product["quantity"] * product["price"]
+    return render(request, "core/checkout.html", {
+        "cart_data": cart_data.values(),
+        "cart_total_amount": cart_total_amount,
+        "product_amount": len(cart_data),
+    })

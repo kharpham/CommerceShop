@@ -42,5 +42,7 @@ urlpatterns = [
     # Update product from cart
     path("update-cart/", views.update_cart, name="update-cart"),
 
+    # Checkout
+    path("checkout/", views.checkout, name="checkout"),
     
 ]
