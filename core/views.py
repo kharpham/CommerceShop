@@ -220,3 +220,19 @@ def remove_from_cart(request):
         }
         return JsonResponse({"data": data})
     return JsonResponse({"data": cart_data, "message": "Product PID not found in cart."}, status=404)
+
+def update_cart(request):
+    pid = request.GET["pid"]
+    quantity = request.GET["quantity"]
+    cart_data = request.session["cart_data_object"]
+    product_subtotal = cart_data[pid]["quantity"] * cart_data[pid]["price"]
+    cart_total_amount = 0
+    if pid in cart_data:
+        cart_data[pid]["quantity"] = int(quantity)
+        product_subtotal = int(quantity) * cart_data[pid]["price"]    
+    for product in cart_data.values():
+        cart_total_amount += product['quantity'] * product['price']
+    request.session["cart_data_object"] = cart_data
+    request.session.modified = True
+    return JsonResponse({"data": {"product_subtotal": product_subtotal, "cart_total_amount": cart_total_amount}})
+

@@ -180,3 +180,30 @@ $(".delete-product").on("click", function () {
     },
   });
 });
+
+$(".refresh-product").on("click", function() {
+  let pid = $(this).data("product");
+  console.log(pid);
+  let quantity = $("#product-quantity-" + pid).val();
+  console.log(quantity);
+  $.ajax({
+    url: '/update-cart',
+    data: {
+      pid,
+      quantity
+    },
+    beforeSend: function() {
+      console.log("Updating product...");
+    },
+    success: function(response) {
+      $("#product-subtotal-" + pid).text("$" + response.data.product_subtotal.toFixed(2));
+      $("#cart-subtotal-amount").text(
+        "$" + response.data.cart_total_amount.toFixed(2)
+      );
+      $("#cart-total-amount").text(
+        "$" + response.data.cart_total_amount.toFixed(2)
+      );
+      console.log("Product updated successfully...");
+    },
+  });
+});
