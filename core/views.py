@@ -314,5 +314,27 @@ def payment_completed_view(request):
         })
     return redirect("core:index")
 
+@login_required()
 def payment_failed_view(request):
     return render(request, "core/payment-failed.html")
+
+@login_required()
+def customer_dashboard(request):
+    orders = request.user.cart_orders.all().order_by("-order_date")
+    context = {
+        "orders": orders
+    }
+    return render(request, 'core/dashboard.html', context)
+
+@login_required()
+def order_detail(request, id):
+    try: 
+        order = CartOrder.objects.get(user=request.user, id=id)
+        order_items = order.items.all()
+        context = {
+            "order_items": order_items,
+            "order": order,
+        }
+        return render(request, 'core/order-detail.html', context)
+    except CartOrder.DoesNotExist:
+        raise Http404("Order does not exist")
