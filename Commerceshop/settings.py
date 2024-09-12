@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     # Third party
     'taggit',
     'django_ckeditor_5',
+
+    # Paypal integration
+    'paypal.standard.ipn',
+    
     # Custom Apps
     'core',
     'userauths',
@@ -237,3 +241,8 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
+
+PAYPAL_RECEIVER_EMAIL = 'desphixbusiness.paypal.com'
+PAYPAL_TEST = True
+
+LOGIN_URL = 'userauths:sign-in'

@@ -1,12 +1,17 @@
-from django.shortcuts import render, get_object_or_404
+from django.conf import settings
+
 from django.http import HttpResponse, Http404, JsonResponse
 from django.db.models import Avg
+from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
 import math
+from paypal.standard.forms import PayPalPaymentsForm
 
 
 
@@ -102,7 +107,7 @@ def tag_list(request, tag_slug=None):
         "tag": tag,
     })
 
-@login_required(login_url="userauths:sign-in")
+@login_required()
 def ajax_add_review(request, pid):
     product = Product.objects.get(pid=pid)
     user = request.user
@@ -236,14 +241,38 @@ def update_cart(request):
     request.session.modified = True
     return JsonResponse({"data": {"product_subtotal": product_subtotal, "cart_total_amount": cart_total_amount}})
 
+@login_required()
 def checkout(request):
+    host = request.get_host()
     cart_total_amount = 0
-    if "cart_data_object" in request.session:
+    if "cart_data_object" in request.session and len(request.session["cart_data_object"]) > 0:
         cart_data = request.session["cart_data_object"]
         for product in cart_data.values():
             cart_total_amount += product["quantity"] * product["price"]
-    return render(request, "core/checkout.html", {
-        "cart_data": cart_data.values(),
-        "cart_total_amount": cart_total_amount,
-        "product_amount": len(cart_data),
-    })
+        paypal_dict = {
+            "business": settings.PAYPAL_RECEIVER_EMAIL,
+            "amount": f"{cart_total_amount:.2f}",
+            "item_name": "Order-Item-No-3",
+            "invoice": "INVOICE-NO-3",
+            "notify_url": request.build_absolute_uri(reverse('core:paypal-ipn')),
+            "return": request.build_absolute_uri(reverse('core:payment-completed')),
+            "cancel_return": request.build_absolute_uri(reverse('core:payment-failed')),
+            "currency_code": "USD",
+        }
+        form = PayPalPaymentsForm(initial=paypal_dict)
+        return render(request, "core/checkout.html", {
+            "cart_data": cart_data.values(),
+            "cart_total_amount": cart_total_amount,
+            "product_amount": len(cart_data),
+            "form": form,
+        })
+    return redirect('core:index')
+
+
+
+def payment_completed_view(request):
+    context = request.POST
+    return render(request, "core/payment-success.html")
+
+def payment_failed_view(request):
+    return render(request, "core/payment-failed.html")

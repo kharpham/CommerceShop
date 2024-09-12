@@ -701,7 +701,10 @@
                             <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-master.svg' %}" alt="">
                             <img src="{% static 'assets/imgs/theme/icons/payment-zapper.svg' %}" alt="">
                         </div>
-                        <a href="#" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></a>
+                        <div class="" style="width: 200px; height: auto;">
+                            {{form.render}}
+                        </div>
+    
                     </div>
                 </div>
             </div>
