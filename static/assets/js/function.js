@@ -1,3 +1,4 @@
+
 $("#commentForm").submit(function (event) {
   event.preventDefault();
   $.ajax({
@@ -170,8 +171,7 @@ $(".delete-product").on("click", function () {
         );
         $("#product-amount").text(response.data.product_amount);
         $(".cart-product-count").text(response.data.product_amount);
-      }
-      else {
+      } else {
         $("#cart-table").remove();
         $("#cart-bill").remove();
         $("#product-amount").text(response.data.product_amount);
@@ -181,22 +181,24 @@ $(".delete-product").on("click", function () {
   });
 });
 
-$(".refresh-product").on("click", function() {
+$(".refresh-product").on("click", function () {
   let pid = $(this).data("product");
   console.log(pid);
   let quantity = $("#product-quantity-" + pid).val();
   console.log(quantity);
   $.ajax({
-    url: '/update-cart',
+    url: "/update-cart",
     data: {
       pid,
-      quantity
+      quantity,
     },
-    beforeSend: function() {
+    beforeSend: function () {
       console.log("Updating product...");
     },
-    success: function(response) {
-      $("#product-subtotal-" + pid).text("$" + response.data.product_subtotal.toFixed(2));
+    success: function (response) {
+      $("#product-subtotal-" + pid).text(
+        "$" + response.data.product_subtotal.toFixed(2)
+      );
       $("#cart-subtotal-amount").text(
         "$" + response.data.cart_total_amount.toFixed(2)
       );
@@ -205,5 +207,21 @@ $(".refresh-product").on("click", function() {
       );
       console.log("Product updated successfully...");
     },
+  });
+});
+
+
+$("#invoice_download_btn").on("click", function () {
+  console.log("Downloading...");
+  const { jsPDF } = window.jspdf;
+
+  let doc = new jsPDF('1', 'mm', [1600, 1400]);
+  let pdfjs = document.querySelector("#invoice_wrapper");
+  doc.html(pdfjs, {
+    callback: function(doc) {
+      doc.save("invoice.pdf");
+    },
+    x: 30,
+    y: 30,
   });
 });

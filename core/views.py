@@ -1,5 +1,5 @@
+from datetime import datetime
 from django.conf import settings
-
 from django.http import HttpResponse, Http404, JsonResponse
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404, redirect
@@ -292,9 +292,27 @@ def checkout(request):
 
 
 
+@login_required()
 def payment_completed_view(request):
-    context = request.POST
-    return render(request, "core/payment-success.html")
+    cart_total_amount = 0
+    current_date = datetime.now()
+    if "cart_data_object" in request.session and len(request.session['cart_data_object']) > 0:
+        cart_data = request.session["cart_data_object"]
+        for product in cart_data.values():
+            cart_total_amount += product['price'] * product['quantity']
+        # Clear the session cart data object
+        # del request.session["cart_data_object"]
+        # request.session.modified = True
+        del request.session['cart_data_object']
+        # Optionally, save the session to apply the changes
+        request.session.modified = True
+        return render(request, "core/payment-success.html", {
+            'cart_total_amount': cart_total_amount,
+            'product_amount': len(cart_data),
+            'cart_data': cart_data.values(),
+            'current_date': current_date,
+        })
+    return redirect("core:index")
 
 def payment_failed_view(request):
     return render(request, "core/payment-failed.html")
