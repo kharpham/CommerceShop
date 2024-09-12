@@ -6,7 +6,7 @@ from taggit.managers import TaggableManager
 from django_ckeditor_5.fields import CKEditor5Field
 
 STATUS_CHOICES = (
-    ("process", "Processing"),
+    ("processing", "Processing"),
     ("shipped", "Shipped"),
     ("delivered", "Delivered"),
 ) 

@@ -242,7 +242,7 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-PAYPAL_RECEIVER_EMAIL = 'desphixbusiness.paypal.com'
+PAYPAL_RECEIVER_EMAIL = 'sb-rvycn32667183@personal.example.com'
 PAYPAL_TEST = True
 
 LOGIN_URL = 'userauths:sign-in'

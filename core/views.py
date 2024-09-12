@@ -245,20 +245,42 @@ def update_cart(request):
 def checkout(request):
     host = request.get_host()
     cart_total_amount = 0
+    # Check if cart_data_object exists in the session and there's more than 1 product in the cart
     if "cart_data_object" in request.session and len(request.session["cart_data_object"]) > 0:
         cart_data = request.session["cart_data_object"]
+        # Get the cart total amount
         for product in cart_data.values():
             cart_total_amount += product["quantity"] * product["price"]
+        # Create new order
+        order = CartOrder.objects.create(
+            user=request.user,
+            price=cart_total_amount,
+        )
+
+        for product in cart_data.values():
+            cart_order_item = CartOrderItem.objects.create(
+                order=order,
+                invoice_no="INVOICE_NO-" + str(order.id),
+                item=product["title"],
+                image=product["image"],
+                quantity=product['quantity'],
+                price=product['price'],
+                total=product['price'] * product['quantity'],
+            )
+
+
+
         paypal_dict = {
             "business": settings.PAYPAL_RECEIVER_EMAIL,
             "amount": f"{cart_total_amount:.2f}",
-            "item_name": "Order-Item-No-3",
-            "invoice": "INVOICE-NO-3",
+            "item_name": "Order-Item-No-" + str(order.id),
+            "invoice": "INVOICE-NO-" + str(order.id),
             "notify_url": request.build_absolute_uri(reverse('core:paypal-ipn')),
-            "return": request.build_absolute_uri(reverse('core:payment-completed')),
-            "cancel_return": request.build_absolute_uri(reverse('core:payment-failed')),
+            "return_url": request.build_absolute_uri(reverse('core:payment-completed')),
+            "cancel_url": request.build_absolute_uri(reverse('core:payment-failed')),
             "currency_code": "USD",
         }
+        print(paypal_dict)
         form = PayPalPaymentsForm(initial=paypal_dict)
         return render(request, "core/checkout.html", {
             "cart_data": cart_data.values(),
