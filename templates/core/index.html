@@ -1,5 +1,6 @@
 {% extends 'partials/base.html'%}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
 <main class="main">
     <div class="container mb-30">
@@ -112,7 +113,19 @@
                                                     <input type="hidden" class="product-pid-{{product.pid}}" value="{{product.pid}}">
                                                     <input type="hidden" class="product-image-{{product.pid}}" value="{{product.image.url}}">
                                                     <input type="hidden" class="product-title-{{product.pid}}" value="{{product.title}}">
-                                                    <button class="add add-to-cart-button" data-index="{{product.pid}}" style="border: none"><i class="fi-rs-shopping-cart mr-5"></i>Add</button>
+                                                    {%if request.user.is_authenticated %}
+                                                    <div class="d-flex">
+                                                        <button class="add add-to-cart-button" data-index="{{product.pid}}" style="border: none"><i class="fi-rs-shopping-cart mr-5"></i>Add</button>
+                                                        {% if product.pid|is_in_list:user_wishlist %}
+                                                        <button style="border: none; background: none;" id="remove-button-{{product.pid}}" class="remove-from-wishlist" data-index="{{product.pid}}"><i id="add-remove-icon-{{product.pid}}" class="fa-solid fa-heart" style="color: red;"></i></button> 
+                                                        <button style="border: none; background: none; display: none;" id="add-button-{{product.pid}}" class="add-to-wishlist" data-index="{{product.pid}}"><i id="add-remove-icon-{{product.pid}}" class="fa-solid fa-heart" style="color: grey;"></i></button> 
+                                                        {% else %}
+                                                        <button style="border: none; background: none;" id="add-button-{{product.pid}}" class="add-to-wishlist" data-index="{{product.pid}}"><i id="add-remove-icon-{{product.pid}}" class="fa-solid fa-heart" style="color: grey;"></i></button> 
+                                                        <button style="border: none; background: none; display: none;" id="remove-button-{{product.pid}}" class="remove-from-wishlist" data-index="{{product.pid}}"><i id="add-remove-icon-{{product.pid}}" class="fa-solid fa-heart" style="color: red;"></i></button> 
+                                                        
+                                                        {% endif %}
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>

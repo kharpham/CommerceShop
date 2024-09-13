@@ -65,4 +65,10 @@ urlpatterns = [
 
     # Wishlist page
     path("wishlist/", views.wishlist_view, name="wishlist"),
+
+    # Add product to wishlist
+    path("add-to-wishlist/", views.add_to_wishlist, name="add-to-wishlist"),
+
+    # Remove product from wishlist
+    path("remove-from-wishlist/", views.remove_from_withlist, name="remove-from-withlist"),
 ]

@@ -13,3 +13,6 @@ def multiply(value1, value2):
     except (ValueError, TypeError):
         return None
     
+@register.filter(name='is_in_list')
+def is_in_list(value, arg_list):
+    return value in arg_list

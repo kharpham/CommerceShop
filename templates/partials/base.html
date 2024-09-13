@@ -382,7 +382,7 @@
                         alt="Nest"
                         src="{% static 'assets/imgs/theme/icons/icon-heart.svg' %}"
                       />
-                      <span class="pro-count blue">6</span>
+                      <span class="pro-count blue" id="wishlist-count">{{user_wishlist|length}}</span>
                     </a>
                     <a href="{% url 'core:wishlist' %}"
                       ><span class="lable">Wishlist</span></a

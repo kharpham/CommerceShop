@@ -18,11 +18,11 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 # Create your views here.
 def index(request):
-    # products = Product.objects.all().order_by("-id")
     products = Product.objects.filter(featured=True, product_status="published")
     return render(request, 'core/index.html', {
         "products": products, 
     })
+    
 
 def product_list_view(request):
     products = Product.objects.filter(product_status="published").order_by("-id")
@@ -163,6 +163,7 @@ def filter_product(request):
     })
     return JsonResponse({"data": data, "product_count": len(products)})
 
+@login_required()
 def add_to_cart(request):
     cart_product = {}
     title = request.GET["title"]
@@ -382,4 +383,29 @@ def wishlist_view(request):
     }
     return render(request, "core/wishlist.html", context)
     
+
+@login_required()
+def add_to_wishlist(request):
+    product_pid = request.GET["product_pid"]
+    try:
+        product = Product.objects.get(pid=product_pid)
+        existing_wishlist = WishList.objects.filter(product=product, user=request.user)
+        if len(existing_wishlist) > 0:
+            return JsonResponse({"message": "Product is already in the wishlist"}, status=400)
+        wishlist = WishList.objects.create(product=product, user=request.user)
+        wishlist_amount = len(WishList.objects.filter(user=request.user))
+        return JsonResponse({"message": "Product added to wishlist successfully...", "wishlist_amount": wishlist_amount})
+    except Product.DoesNotExist:
+        return JsonResponse({"message": "Product does not exist"}, status=404)
     
+@login_required()
+def remove_from_withlist(request):
+    product_pid = request.GET["product_pid"]
+    try:
+        product = Product.objects.get(pid=product_pid)
+        removed_product = get_object_or_404(WishList, product=product, user=request.user)
+        removed_product.delete()
+        wishlist_amount = len(WishList.objects.filter(user=request.user))
+        return JsonResponse({"message": "Product removed from wishlist successfully...", "wishlist_amount": wishlist_amount})
+    except Product.DoesNotExist:
+        return JsonResponse({"message": "Product does not exist"}, status=404)

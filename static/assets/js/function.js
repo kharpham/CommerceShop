@@ -147,6 +147,7 @@ $(".add-to-cart-button").on("click", function () {
   });
 });
 
+// Delete cart item
 $(".delete-product").on("click", function () {
   let pid = $(this).data("product");
   $.ajax({
@@ -180,6 +181,7 @@ $(".delete-product").on("click", function () {
   });
 });
 
+// Update cart item
 $(".refresh-product").on("click", function () {
   let pid = $(this).data("product");
   console.log(pid);
@@ -187,6 +189,7 @@ $(".refresh-product").on("click", function () {
   console.log(quantity);
   $.ajax({
     url: "/update-cart",
+    dataType: 'json',
     data: {
       pid,
       quantity,
@@ -209,6 +212,7 @@ $(".refresh-product").on("click", function () {
   });
 });
 
+// Download invoice
 $("#invoice_download_btn").on("click", function () {
   console.log("Downloading...");
   const { jsPDF } = window.jspdf;
@@ -224,6 +228,7 @@ $("#invoice_download_btn").on("click", function () {
   });
 });
 
+// Make address default
 $(".make-default").on("click", function () {
   let address_id = $(this).attr("id");
   let button = $(this);
@@ -252,3 +257,52 @@ $(".make-default").on("click", function () {
     },
   });
 });
+
+// Add product to wishlist
+ $(".add-to-wishlist").on("click", function() {
+  let product_pid = $(this).data("index");
+  let button = $(this);
+  $.ajax({
+    url: '/add-to-wishlist',
+    data: {
+      product_pid,
+    },
+    beforeSend: function() {
+      console.log("Adding product to wishlist...");
+    },
+    success: function(response) {
+      // button.removeClass('add-to-wishlist');
+      // button.addClass('remove-from-wishlist');
+      // $("#add-remove-icon-" + product_pid).css("color", "red");
+      button.hide()
+      $("#remove-button-" + product_pid).show();
+      $("#wishlist-count").text(response.wishlist_amount);
+      console.log(response.message);
+    }
+  })
+ });
+
+ // Remove product from wishlist
+ $(".remove-from-wishlist").on("click", function() {
+  let product_pid = $(this).data("index");
+  let button = $(this);
+  $.ajax({
+    url: '/remove-from-wishlist',
+    data: {
+      product_pid,
+    },
+    beforeSend: function() {
+      console.log("Removing product to wishlist...");
+    },
+    success: function(response) {
+      // button.removeClass('remove-from-wishlist');
+      // button.addClass('add-to-wishlist');
+      // $("#add-remove-icon-" + product_pid).css("color", "grey");
+      button.hide()
+      $("#add-button-" + product_pid).show();
+      $("#wishlist-count").text(response.wishlist_amount);
+      console.log(response.message);
+    }
+  })
+ });
+
