@@ -16,8 +16,6 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 
 
-
-
 # Create your views here.
 def index(request):
     # products = Product.objects.all().order_by("-id")
@@ -207,7 +205,6 @@ def cart_view(request):
     }
     return render(request, "core/cart.html", context)
 
-
 def remove_from_cart(request):
     pid = request.GET["pid"]
     cart_data = request.session["cart_data_object"]
@@ -299,8 +296,6 @@ def checkout(request):
     messages.add_message(request, messages.WARNING, 'Your cart is empty...')
     return redirect('core:index')
 
-
-
 @login_required()
 def payment_completed_view(request):
     cart_total_amount = 0
@@ -361,7 +356,6 @@ def order_detail(request, id):
     except CartOrder.DoesNotExist:
         raise Http404("Order does not exist.")
 
-
 def make_address_default(request):
         address_id = request.GET["address_id"]
         try:
@@ -380,3 +374,12 @@ def make_address_default(request):
         except Address.DoesNotExist:
             raise Http404({"message": "Address does not exist."}, status=404)
  
+@login_required
+def wishlist_view(request):
+    wishlist = WishList.objects.filter(user=request.user)
+    context = {
+        "wishlist": wishlist,
+    }
+    return render(request, "core/wishlist.html", context)
+    
+    

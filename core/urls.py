@@ -62,4 +62,7 @@ urlpatterns = [
 
     # Make address default
     path("default-address/", views.make_address_default, name="make-address-default"),
+
+    # Wishlist page
+    path("wishlist/", views.wishlist_view, name="wishlist"),
 ]

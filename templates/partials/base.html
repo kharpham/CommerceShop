@@ -219,7 +219,7 @@
                 <ul>
                   <li><a href="page-about.htlm">About Us</a></li>
                   <li><a href="page-account.html">My Account</a></li>
-                  <li><a href="shop-wishlist.html">Wishlist</a></li>
+                  <li><a href="{% url 'core:wishlist' %}">Wishlist</a></li>
                   <li><a href="shop-order.html">Order Tracking</a></li>
                 </ul>
               </div>
@@ -376,7 +376,7 @@
                     >
                   </div>
                   <div class="header-action-icon-2">
-                    <a href="shop-wishlist.html">
+                    <a href="{% url 'core:wishlist' %}">
                       <img
                         class="svgInject"
                         alt="Nest"
@@ -384,7 +384,7 @@
                       />
                       <span class="pro-count blue">6</span>
                     </a>
-                    <a href="shop-wishlist.html"
+                    <a href="{% url 'core:wishlist' %}"
                       ><span class="lable">Wishlist</span></a
                     >
                   </div>
