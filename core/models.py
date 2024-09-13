@@ -190,7 +190,7 @@ class Address(models.Model):
     status = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name_plural = "Address"
+        verbose_name_plural = "Addresses"
     def __str__(self):
         return self.address
 

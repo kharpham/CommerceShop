@@ -1,4 +1,3 @@
-
 $("#commentForm").submit(function (event) {
   event.preventDefault();
   $.ajax({
@@ -210,18 +209,46 @@ $(".refresh-product").on("click", function () {
   });
 });
 
-
 $("#invoice_download_btn").on("click", function () {
   console.log("Downloading...");
   const { jsPDF } = window.jspdf;
 
-  let doc = new jsPDF('1', 'mm', [1600, 1400]);
+  let doc = new jsPDF("1", "mm", [1600, 1400]);
   let pdfjs = document.querySelector("#invoice_wrapper");
   doc.html(pdfjs, {
-    callback: function(doc) {
+    callback: function (doc) {
       doc.save("invoice.pdf");
     },
     x: 30,
     y: 30,
+  });
+});
+
+$(".make-default").on("click", function () {
+  let address_id = $(this).attr("id");
+  let button = $(this);
+
+  $.ajax({
+    url: "/default-address",
+    dataType: "json",
+    data: {
+      address_id,
+    },
+    beforeSend: function () {
+      console.log("Updating address...");
+    },
+    success: function (response) {
+      if (response.data["undefault"] != "None") {
+        button.hide();
+        $("#address-" + address_id).show();
+        $("#" + response.data["undefault"]).show();
+        $("#address-" + response.data["undefault"]).hide();
+        console.log("Address updated successfully...");
+      }
+      else {
+        button.hide();
+        $("#address-" + address_id).show();
+      }
+    },
   });
 });

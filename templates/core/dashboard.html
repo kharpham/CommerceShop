@@ -155,8 +155,13 @@
                                                             {{address}} <br>
                                                             {{address.mobile}}
                                                         </address>
-                                                        <button class="btn">Make Default</button>
-                                                        <i class="fa fa-check-circle text-success"></i>
+                                                        {% if address.status %}
+                                                        <i id="address-{{address.id}}" class="fa fa-check-circle text-success default"></i>
+                                                        <button id="{{address.id}}" class="btn make-default" style="display: none;">Make Default</button>
+                                                        {% else %}
+                                                        <i id="address-{{address.id}}" class="fa fa-check-circle text-success" style="display: none;"></i>
+                                                        <button id="{{address.id}}" class="btn make-default">Make Default</button>
+                                                        {% endif %}
                                                     </div>
                                                     
                                                 </div>

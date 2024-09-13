@@ -59,4 +59,7 @@ urlpatterns = [
 
     # Order detail
     path("dashboard/orders/<int:id>", views.order_detail, name="order-detail"),
+
+    # Make address default
+    path("default-address/", views.make_address_default, name="make-address-default"),
 ]

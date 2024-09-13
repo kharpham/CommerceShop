@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.conf import settings
+from django.contrib import messages
 from django.http import HttpResponse, Http404, JsonResponse
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404, redirect
@@ -243,7 +244,6 @@ def update_cart(request):
 
 @login_required()
 def checkout(request):
-    host = request.get_host()
     cart_total_amount = 0
     # Check if cart_data_object exists in the session and there's more than 1 product in the cart
     if "cart_data_object" in request.session and len(request.session["cart_data_object"]) > 0:
@@ -280,14 +280,23 @@ def checkout(request):
             "cancel_url": request.build_absolute_uri(reverse('core:payment-failed')),
             "currency_code": "USD",
         }
-        print(paypal_dict)
         form = PayPalPaymentsForm(initial=paypal_dict)
+
+        address = ""
+        try:
+            address = request.user.address.get(status=True)
+        except Address.DoesNotExist:
+            address = ""
         return render(request, "core/checkout.html", {
             "cart_data": cart_data.values(),
             "cart_total_amount": cart_total_amount,
             "product_amount": len(cart_data),
             "form": form,
+            "address": address,
         })
+    
+    
+    messages.add_message(request, messages.WARNING, 'Your cart is empty...')
     return redirect('core:index')
 
 
@@ -352,3 +361,22 @@ def order_detail(request, id):
     except CartOrder.DoesNotExist:
         raise Http404("Order does not exist.")
 
+
+def make_address_default(request):
+        address_id = request.GET["address_id"]
+        try:
+            address =Address.objects.get(id=address_id)
+            try:
+                undefault_address = Address.objects.get(status=True, user=request.user)
+                undefault_address.status = False
+                undefault_address.save()
+                address.status = True
+                address.save()
+                return JsonResponse({"data": {"undefault": undefault_address.id}})
+            except Address.DoesNotExist:
+                address.status = True
+                address.save()
+                return JsonResponse({"data": {"undefault": "None"}})
+        except Address.DoesNotExist:
+            raise Http404({"message": "Address does not exist."}, status=404)
+ 
