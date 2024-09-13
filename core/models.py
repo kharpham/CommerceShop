@@ -186,10 +186,12 @@ class WishList(models.Model):
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="address")
     address =  models.CharField(max_length=100, null=True)
+    mobile = models.CharField(max_length=20, null=True)
     status = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Address"
-
+    def __str__(self):
+        return self.address
 
 

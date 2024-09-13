@@ -321,8 +321,20 @@ def payment_failed_view(request):
 @login_required()
 def customer_dashboard(request):
     orders = request.user.cart_orders.all().order_by("-order_date")
+    addresses =  Address.objects.filter(user=request.user)
+
+    if request.method == "POST":
+        mobile = request.POST.get("mobile")
+        address = request.POST.get("address")
+        new_address = Address.objects.create(
+            user=request.user,
+            address=address,
+            mobile=mobile
+        )
+        return redirect("core:dashboard")
     context = {
-        "orders": orders
+        "orders": orders,
+        "addresses": addresses,
     }
     return render(request, 'core/dashboard.html', context)
 
@@ -331,10 +343,12 @@ def order_detail(request, id):
     try: 
         order = CartOrder.objects.get(user=request.user, id=id)
         order_items = order.items.all()
+
         context = {
             "order_items": order_items,
             "order": order,
         }
         return render(request, 'core/order-detail.html', context)
     except CartOrder.DoesNotExist:
-        raise Http404("Order does not exist")
+        raise Http404("Order does not exist.")
+
