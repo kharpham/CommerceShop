@@ -258,7 +258,7 @@ $(".make-default").on("click", function () {
   });
 });
 
-// Add product to wishlist
+// Add product to wishlist in homepage
  $(".add-to-wishlist").on("click", function() {
   let product_pid = $(this).data("index");
   let button = $(this);
@@ -282,7 +282,7 @@ $(".make-default").on("click", function () {
   })
  });
 
- // Remove product from wishlist
+ // Remove product from wishlist in homepage
  $(".remove-from-wishlist").on("click", function() {
   let product_pid = $(this).data("index");
   let button = $(this);
@@ -302,6 +302,33 @@ $(".make-default").on("click", function () {
       $("#add-button-" + product_pid).show();
       $("#wishlist-count").text(response.wishlist_amount);
       console.log(response.message);
+    }
+  })
+ });
+
+ // Remove product from wishlist in wishlist page
+ $(".remove-from-wishlist-page").on("click", function() {
+  let product_pid = $(this).data("index");
+  let button = $(this);
+  $.ajax({
+    url: '/remove-from-wishlist',
+    data: {
+      product_pid,
+    },
+    beforeSend: function() {
+      console.log("Removing product to wishlist...");
+    },
+    success: function(response) {
+      if (response.wishlist_amount > 0) {
+        $("#product-row-" + product_pid).remove();
+        $("#wishlist-count").text(response.wishlist_amount);
+        $("#wishlist-count-2").text(response.wishlist_amount);
+      }
+      else {
+        $("#table-wishlist").remove();
+        $("#wishlist-count-2").text(response.wishlist_amount);
+      }
+      console.log("Product removed from wishlist successfully...");
     }
   })
  });
