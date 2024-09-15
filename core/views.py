@@ -2,7 +2,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse, Http404, JsonResponse
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -13,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
 import math
 from paypal.standard.forms import PayPalPaymentsForm
+
+import calendar
+from django.db.models.functions import ExtractMonth
 
 
 
@@ -326,7 +329,15 @@ def payment_failed_view(request):
 @login_required()
 def customer_dashboard(request):
     orders = request.user.cart_orders.all().order_by("-order_date")
+    print(type(orders))
     addresses =  Address.objects.filter(user=request.user)
+    order_distribution = request.user.cart_orders.all().annotate(month=ExtractMonth("order_date")).values("month").annotate(count=Count("id")).values("month", "count")
+    months = []
+    total_orders = []
+
+    for order in order_distribution:
+        months.append(calendar.month_name[order['month']])
+        total_orders.append(order["count"])
 
     if request.method == "POST":
         mobile = request.POST.get("mobile")
@@ -340,6 +351,9 @@ def customer_dashboard(request):
     context = {
         "orders": orders,
         "addresses": addresses,
+        "order_distribution": order_distribution,
+        "months": months,
+        "total_orders": total_orders,
     }
     return render(request, 'core/dashboard.html', context)
 

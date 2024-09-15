@@ -53,6 +53,9 @@
                                                     manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a>
                                                 </p>
                                             </div>
+                                            <div>
+                                                <canvas id="myChart"></canvas>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
@@ -223,4 +226,29 @@
             </div>
         </div>
     </main>
+    
+    <script>
+        const ctx = document.getElementById('myChart');
+      
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: {{months | safe}},
+            datasets: [{
+              label: 'All orders', 
+              data: {{total_orders | safe }},
+              borderWidth: 1,
+              borderColor: 'rgb(59, 183, 126)',
+              backgroundColor: 'rgb(59, 183, 126)',
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
 {% endblock %}
