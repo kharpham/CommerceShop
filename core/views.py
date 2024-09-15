@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
+from userauths.models import ContactUs
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
@@ -423,3 +424,24 @@ def remove_from_withlist(request):
         return JsonResponse({"message": "Product removed from wishlist successfully...", "wishlist_amount": wishlist_amount})
     except Product.DoesNotExist:
         return JsonResponse({"message": "Product does not exist"}, status=404)
+
+def contact(request):
+    return render(request, "core/contact.html")
+
+@login_required()
+def contact_ajax(request):
+    full_name = request.POST["full_name"]
+    email = request.POST["email"]
+    phone = request.POST["phone"]
+    subject = request.POST["subject"]
+    message = request.POST["message"]
+    
+    contact_form = ContactUs.objects.create(full_name=full_name, email=email, phone=phone, subject=subject, message=message)
+    context = {
+        "bool": True,
+        "message": "Contact form sent to the server successfully...",
+    }
+    return JsonResponse({"data": context})
+
+
+

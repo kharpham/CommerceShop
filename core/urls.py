@@ -71,4 +71,10 @@ urlpatterns = [
 
     # Remove product from wishlist
     path("remove-from-wishlist/", views.remove_from_withlist, name="remove-from-withlist"),
+
+    # Contact page
+    path("contact/", views.contact, name="contact"),
+
+    # Contact with ajax
+    path("contact-ajax/", views.contact_ajax, name="contact-ajax"),
 ]

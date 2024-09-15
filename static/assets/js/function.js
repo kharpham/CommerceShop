@@ -333,3 +333,38 @@ $(".make-default").on("click", function () {
   })
  });
 
+$("#contact-form").submit(function(event) {
+  event.preventDefault();
+
+  let full_name = $("#form-name").val();
+  let email = $("#form-email").val();
+  let phone = $("#form-phone").val();
+  let subject = $("#form-subject").val();
+  let message = $("#form-message").val();
+  
+  let csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+
+  $.ajax({
+    url: "/contact-ajax/",
+    method: "POST",
+    dataType: "json",
+    data: {
+      full_name,
+      email,
+      phone,
+      subject,
+      message,
+    },
+    headers: {
+      'X-CSRFToken': csrftoken  // Add CSRF token to request headers
+    },
+    beforeSend: function() {
+      console.log("Sending contact form...");
+    },
+    success: function(response) {
+      $("#contact-form").hide();
+      $("#contact-message").show(); 
+      console.log(response.data.message);
+    }
+  })
+});
