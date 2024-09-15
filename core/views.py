@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
-from userauths.models import ContactUs
+from userauths.models import ContactUs, Profile
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
@@ -330,8 +330,9 @@ def payment_failed_view(request):
 @login_required()
 def customer_dashboard(request):
     orders = request.user.cart_orders.all().order_by("-order_date")
-    print(type(orders))
     addresses =  Address.objects.filter(user=request.user)
+    profile = Profile.objects.filter(user=request.user)
+
     order_distribution = request.user.cart_orders.all().annotate(month=ExtractMonth("order_date")).values("month").annotate(count=Count("id")).values("month", "count")
     months = []
     total_orders = []
@@ -355,6 +356,7 @@ def customer_dashboard(request):
         "order_distribution": order_distribution,
         "months": months,
         "total_orders": total_orders,
+        "profile": profile[0], 
     }
     return render(request, 'core/dashboard.html', context)
 
