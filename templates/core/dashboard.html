@@ -56,7 +56,11 @@
                                                 </div>
                                                 <div>
                                                     <input class="mb-2" type="text" value="Name - {{profile.full_name}}"> 
+                                                    {% if profile.bio %}
                                                     <input class="mb-2" type="text" value="Bio - {{profile.bio}}"> 
+                                                    {% else %}
+                                                    <input class="mb-2" type="text" value="Bio - "> 
+                                                    {% endif %}
                                                     <input class="mb-2" type="text" value="Phone - {{profile.phone}}"> 
                                                     {% if profile.verified %}
                                                     <div class="p-4 border rounded">
@@ -68,7 +72,7 @@
                                                     </div>
                                                     {% endif %}
                                                     <div class="p-4 border rounded mt-10">
-                                                        <button class="btn btn-success">Edit profile</button>
+                                                        <a href="{% url 'userauths:profile-update' %}" class="btn btn-success">Edit profile</a>
                                                     </div>
                                                 </div>
 
