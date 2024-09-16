@@ -59,6 +59,7 @@ def profile_update(request):
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user
+            profile.verified = True
             profile.save()
             messages.success(request, "Profile updated successfully.")
             return redirect("core:dashboard")

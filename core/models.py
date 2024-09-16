@@ -132,10 +132,29 @@ class ProductImage(models.Model):
 
 class CartOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cart_orders")
-    price = models.DecimalField(max_digits=10, decimal_places=2, default="1.99")
+
+    full_name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(max_length=100, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    address = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    state = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+
+    price = models.DecimalField(max_digits=10, decimal_places=2, default="0.00")
+    saved = models.DecimalField(max_digits=10, decimal_places=2, default="0.00")
+
+    shipping_method = models.CharField(max_length=100, null=True, blank=True)
+    tracking_id = models.CharField(max_length=100, null=True, blank=True)
+    tracking_website_address = models.CharField(max_length=100, null=True, blank=True)
+
     paid_status = models.BooleanField(default=False)
     order_date = models.DateTimeField(auto_now_add=True)
     product_status = models.CharField(choices=STATUS_CHOICES, max_length=30, default="processing")
+    sku = ShortUUIDField(null=True, blank=True, length=5, prefix="SKU", max_length=20)
+    oid = ShortUUIDField(null=True, blank=True, length=5, prefix="SKU", max_length=20)
+
+    stripe_payment_intent = models.CharField(max_length=1000, null=True, blank=True)
     
     class Meta:
         verbose_name_plural = "Cart Orders"

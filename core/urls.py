@@ -43,7 +43,8 @@ urlpatterns = [
     path("update-cart/", views.update_cart, name="update-cart"),
 
     # Checkout
-    path("checkout/", views.checkout, name="checkout"),
+    path("save-checkout-info/", views.save_checkout_info, name="save-checkout-info"),
+    path("checkout/<str:oid>/", views.checkout, name="checkout"),
 
     # Paypal payment
     path("paypal/", include("paypal.standard.ipn.urls")),

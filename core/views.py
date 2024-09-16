@@ -167,7 +167,6 @@ def filter_product(request):
     })
     return JsonResponse({"data": data, "product_count": len(products)})
 
-@login_required()
 def add_to_cart(request):
     cart_product = {}
     title = request.GET["title"]
@@ -244,62 +243,71 @@ def update_cart(request):
     request.session.modified = True
     return JsonResponse({"data": {"product_subtotal": product_subtotal, "cart_total_amount": cart_total_amount}})
 
-@login_required()
-def checkout(request):
-    cart_total_amount = 0
-    # Check if cart_data_object exists in the session and there's more than 1 product in the cart
-    if "cart_data_object" in request.session and len(request.session["cart_data_object"]) > 0:
-        cart_data = request.session["cart_data_object"]
-        # Get the cart total amount
-        for product in cart_data.values():
-            cart_total_amount += product["quantity"] * product["price"]
-        # Create new order
-        order = CartOrder.objects.create(
-            user=request.user,
-            price=cart_total_amount,
-        )
+def save_checkout_info(request):
+    cart_total_amount = 0   
 
-        for product in cart_data.values():
-            cart_order_item = CartOrderItem.objects.create(
-                order=order,
-                invoice_no="INVOICE_NO-" + str(order.id),
-                item=product["title"],
-                image=product["image"],
-                quantity=product['quantity'],
-                price=product['price'],
-                total=product['price'] * product['quantity'],
+    if request.method == "POST":
+        full_name = request.POST["full_name"]
+        email = request.POST["email"]
+        mobile = request.POST["mobile"]
+        address = request.POST["address"]
+        city = request.POST["city"]
+        state  = request.POST["state"]
+        country = request.POST["country"]
+        request.session["mobile"] = mobile
+        request.session["email"] = email
+        request.session["address"] = address
+        request.session["full_name"] = full_name
+        request.session["city"] = city
+        request.session["state"] = state
+        request.session["country"] = country
+        if "cart_data_object" in request.session and len(request.session["cart_data_object"]) > 0:
+            cart_data = request.session["cart_data_object"]
+            # Get the cart total amount
+            for product in cart_data.values():
+                cart_total_amount += product["quantity"] * product["price"]
+            # Create new order
+            order = CartOrder.objects.create(
+                user=request.user,
+                price=cart_total_amount,
+                full_name=full_name,
+                email=email,
+                address=address,
+                city=city,
+                state=state,
+                phone=mobile,
+                country=country,
             )
+            del request.session["email"]
+            del request.session["mobile"]
+            del request.session["address"]
+            del request.session["full_name"]
+            del request.session["city"]
+            del request.session["state"]
+            del request.session["country"]
 
+            for product in cart_data.values():
+                cart_order_item = CartOrderItem.objects.create(
+                    order=order,
+                    invoice_no="INVOICE_NO-" + str(order.id),
+                    item=product["title"],
+                    image=product["image"],
+                    quantity=product['quantity'],
+                    price=product['price'],
+                    total=product['price'] * product['quantity'],
+                )
+            return redirect("core:checkout", order.oid)
+        return JsonResponse({"message": "Your cart is empty"}, status=400)
 
+def checkout(request, oid):
+    order = CartOrder.objects.get(oid=oid)
+    order_items = order.items.all()
 
-        paypal_dict = {
-            "business": settings.PAYPAL_RECEIVER_EMAIL,
-            "amount": f"{cart_total_amount:.2f}",
-            "item_name": "Order-Item-No-" + str(order.id),
-            "invoice": "INVOICE-NO-" + str(order.id),
-            "notify_url": request.build_absolute_uri(reverse('core:paypal-ipn')),
-            "return_url": request.build_absolute_uri(reverse('core:payment-completed')),
-            "cancel_url": request.build_absolute_uri(reverse('core:payment-failed')),
-            "currency_code": "USD",
-        }
-        form = PayPalPaymentsForm(initial=paypal_dict)
-
-        address = ""
-        try:
-            address = request.user.address.get(status=True)
-        except Address.DoesNotExist:
-            address = ""
-        return render(request, "core/checkout.html", {
-            "cart_data": cart_data.values(),
-            "cart_total_amount": cart_total_amount,
-            "product_amount": len(cart_data),
-            "form": form,
-            "address": address,
-        })
-    
-    
-    messages.add_message(request, messages.WARNING, 'Your cart is empty...')
-    return redirect('core:index')
+    context = {
+        "order": order,
+        "order_items": order_items,
+    }
+    return render(request, "core/checkout.html", context)
 
 @login_required()
 def payment_completed_view(request):
