@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
+from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address, Coupon
 
 # Register your models here.
 class ProductImagesAdmin(admin.TabularInline):
@@ -41,4 +41,4 @@ admin.site.register(CartOrderItem, CartOrderItemAdmin)
 admin.site.register(ProductReview, ProductReviewAdmin)
 admin.site.register(WishList, WishListAdmin)
 admin.site.register(Address, AddressAdmin)
-
+admin.site.register(Coupon)

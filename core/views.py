@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
+from core.models import Coupon, Product, Category, Vendor, CartOrder, CartOrderItem, WishList, ProductImage, ProductReview, Address
 from userauths.models import ContactUs, Profile
 from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
@@ -302,11 +302,31 @@ def save_checkout_info(request):
 def checkout(request, oid):
     order = CartOrder.objects.get(oid=oid)
     order_items = order.items.all()
-
     context = {
         "order": order,
         "order_items": order_items,
     }
+    # Handling coupon submission
+    if request.method == "POST":
+        code = request.POST.get("code")   
+        coupon = Coupon.objects.filter(code=code, active=True).first()
+        if coupon: 
+            if coupon in order.coupons.all():
+                messages.warning(request, "Coupon already activated.")
+                return redirect("core:checkout", order.oid)
+            else:
+                discount = order.price * coupon.discount / 100
+                order.coupons.add(coupon)
+                order.price -= discount
+                order.saved += discount
+                order.save()
+                messages.success(request, "Coupon activated successfully.")
+                return redirect("core:checkout", order.oid)
+        else: 
+            messages.warning(request, "Coupon does not exist.")
+            return redirect("core:checkout", order.oid)
+
+    
     return render(request, "core/checkout.html", context)
 
 @login_required()
