@@ -13,7 +13,7 @@ from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 from core.forms import ProductReviewForm
 import math
-from paypal.standard.forms import PayPalPaymentsForm
+import stripe
 
 import calendar
 from django.db.models.functions import ExtractMonth
@@ -254,10 +254,10 @@ def save_checkout_info(request):
         city = request.POST["city"]
         state  = request.POST["state"]
         country = request.POST["country"]
-        request.session["mobile"] = mobile
-        request.session["email"] = email
+        # request.session["mobile"] = mobile
+        # request.session["email"] = email
         request.session["address"] = address
-        request.session["full_name"] = full_name
+        # request.session["full_name"] = full_name
         request.session["city"] = city
         request.session["state"] = state
         request.session["country"] = country
@@ -278,13 +278,13 @@ def save_checkout_info(request):
                 phone=mobile,
                 country=country,
             )
-            del request.session["email"]
-            del request.session["mobile"]
-            del request.session["address"]
-            del request.session["full_name"]
-            del request.session["city"]
-            del request.session["state"]
-            del request.session["country"]
+            # del request.session["email"]
+            # del request.session["mobile"]
+            # del request.session["address"]
+            # del request.session["full_name"]
+            # del request.session["city"]
+            # del request.session["state"]
+            # del request.session["country"]
 
             for product in cart_data.values():
                 cart_order_item = CartOrderItem.objects.create(
@@ -305,6 +305,7 @@ def checkout(request, oid):
     context = {
         "order": order,
         "order_items": order_items,
+        "stripe_publishable_key": settings.STRIPE_PUBLIC_KEY,
     }
     # Handling coupon submission
     if request.method == "POST":
@@ -329,7 +330,38 @@ def checkout(request, oid):
     
     return render(request, "core/checkout.html", context)
 
-@login_required()
+@csrf_exempt
+def create_checkout_session(request, oid):
+    order = CartOrder.objects.get(oid=oid)
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    checkout_session = stripe.checkout.Session.create(
+        customer_email= order.email,
+        payment_method_types = ['card'],
+        line_items = [
+            {
+                'price_data': {
+                    'currency': "USD",
+                    "product_data": {
+                        'name': order.full_name 
+                    },
+                    "unit_amount": int(order.price * 100)
+                }, 
+                'quantity': 1
+            },
+        ],
+        mode = 'payment',
+        success_url = request.build_absolute_uri(reverse("core:payment-completed", args=[order.oid])) + "?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url = request.build_absolute_uri(reverse("core:payment-failed")),
+    )
+    order.paid_status = False
+    order.stripe_payment_intent = checkout_session['id']
+    order.save()
+
+    return JsonResponse({"sessionId": checkout_session.id})
+
+
+
 def payment_completed_view(request, oid):
     cart_total_amount = 0
     current_date = datetime.now()
@@ -365,7 +397,7 @@ def payment_completed_view(request, oid):
             'oid': oid,
         })
 
-@login_required()
+
 def payment_failed_view(request):
     return render(request, "core/payment-failed.html")
 
