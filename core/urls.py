@@ -50,7 +50,7 @@ urlpatterns = [
     path("paypal/", include("paypal.standard.ipn.urls")),
     
     # Payment successful
-    path("payment-completed/", views.payment_completed_view, name="payment-completed"),
+    path("payment-completed/<str:oid>", views.payment_completed_view, name="payment-completed"),
 
     # Payment failed
     path("payment-failed/", views.payment_failed_view, name="payment-failed"),

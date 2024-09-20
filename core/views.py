@@ -330,9 +330,13 @@ def checkout(request, oid):
     return render(request, "core/checkout.html", context)
 
 @login_required()
-def payment_completed_view(request):
+def payment_completed_view(request, oid):
     cart_total_amount = 0
     current_date = datetime.now()
+    order = CartOrder.objects.get(oid=oid)
+    if order.paid_status == False:
+        order.paid_status = True
+        order.save()
     if "cart_data_object" in request.session and len(request.session['cart_data_object']) > 0:
         cart_data = request.session["cart_data_object"]
         for product in cart_data.values():
@@ -348,8 +352,18 @@ def payment_completed_view(request):
             'product_amount': len(cart_data),
             'cart_data': cart_data.values(),
             'current_date': current_date,
+            'oid': oid,
         })
-    return redirect("core:index")
+    else:
+        for item in order.items.all():
+            cart_total_amount += item.price * item.quantity
+        return render(request, "core/payment-success.html", {
+            'cart_total_amount': cart_total_amount,
+            'product_amount': order.items.count(),
+            'cart_data': order.items.all(),
+            'current_date': current_date,
+            'oid': oid,
+        })
 
 @login_required()
 def payment_failed_view(request):

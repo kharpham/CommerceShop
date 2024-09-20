@@ -86,35 +86,32 @@
         </div>
     </main>
 
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
     <script src="https://js.stripe.com/v3/"></script>
 
     <script>
-        paypal
-            .Buttons({
-                createOrder: function (data, actions) {
-                    return actions.order.create({
-                        purchase_units: [
-                            {
-                                amount: {
-                                    value: "{{order.price}}",
-                                },
-                            },
-                        ],
-                    });
-                },
-
-                onApprove: function (data, actions) {
-                    return actions.order.capture().then(function (Detail) {
-                        console.log(Detail);
-                        if (Detail.status === "COMPLETED") {
-                            window.location.href = `/payment-completed/{{ order.oid }}/?status=${Detail.status}`;
+        paypal.Buttons({
+            createOrder: function(data, action) {
+                return action.order.create({
+                    purchase_units: [
+                        {
+                            amount: {
+                                value: "{{order.price}}"
+                            }
                         }
-                    });
-                },
-            })
-            .render("#paypal-button-container");
+                    ]
+                })
+            },
+            onApprove: function(data, action) {
+                return action.order.capture().then(function(Detail) {
+                    console.log(Detail);
+                    if (Detail.status  === 'COMPLETED') {
+                        window.location.href = `/payment-completed/{{order.oid}}?status=${Detail.status}`;
+                    }
+                });
+            }, 
+        }).render("#paypal-button-container");
     </script>
 
     <script>
