@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from core.models import CartOrder, Product, Category
+from core.models import CartOrder, Product, Category, CartOrderItem
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 from userauths.models import User
 from useradmin.forms import AddProductForm
+
 
 import datetime
 
@@ -80,3 +82,21 @@ def delete_product(request, pid):
     product = Product.objects.get(pid=pid)
     product.delete()
     return redirect("useradmin:products")  
+
+def orders(request):
+    orders = CartOrder.objects.all().order_by("-order_date")
+    context = {
+        "orders": orders
+    }
+    
+    return render(request, "useradmin/orders.html", context)
+
+def order_detail(request, oid):
+    order = get_object_or_404(CartOrder, oid=oid)
+    items = order.items.all()
+
+    context = {
+        "order": order,
+        "items": items,
+    }
+    return render(request, "useradmin/order-detail.html", context)
