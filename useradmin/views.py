@@ -58,3 +58,25 @@ def add_product(request):
         form = AddProductForm()
         return render(request, "useradmin/add-product.html", {"form": form})
 
+
+def edit_product(request, pid):
+    product = Product.objects.get(pid=pid)
+    if request.method == "POST":
+        form = AddProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            new_form  = form.save(commit=False)
+            new_form.user =  request.user
+            new_form.save()
+            # Save many to many fields
+            form.save_m2m()
+            return redirect("useradmin:edit-product", product.pid)
+        else:
+            return render(request, "useradmin/add-product.html", {"form": form, "product": product})
+    else:
+        form = AddProductForm(instance=product)
+        return render(request, "useradmin/edit-product.html", {"form": form, "product": product})
+
+def delete_product(request, pid):
+    product = Product.objects.get(pid=pid)
+    product.delete()
+    return redirect("useradmin:products")  
