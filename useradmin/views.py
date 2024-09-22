@@ -32,7 +32,7 @@ def dashboard(request):
     return render(request, "useradmin/dashboard.html", context)
 
 def products(request):
-    products =  Product.objects.all()
+    products =  Product.objects.all().order_by("-date")
     categories = Category.objects.all()
 
     context = {
@@ -52,6 +52,8 @@ def add_product(request):
             # Save many to many fields
             form.save_m2m()
             return redirect("useradmin:dashboard")
+        else:
+            return render(request, "useradmin/add-product.html", {"form": form})
     else:
         form = AddProductForm()
         return render(request, "useradmin/add-product.html", {"form": form})
