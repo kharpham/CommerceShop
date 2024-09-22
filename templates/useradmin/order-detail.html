@@ -4,6 +4,7 @@
 {% block content %}
 <section class="content-main">
     <div class="content-header">
+        
         <div>
             <h2 class="content-title card-title">Order detail</h2>
             <p>Details for Order ID: 3453012</p>
@@ -16,14 +17,15 @@
                     <span> <i class="material-icons md-calendar_today"></i> <b>{{order.order_date}}</b> </span> <br />
                     <small class="text-muted">Order ID: {{order.oid}}</small>
                 </div>
-                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                    <select class="form-select d-inline-block mb-lg-0 mr-5 mw-200">
-                        <option value="processing">Change Order Status</option>
-                        <option value="processing">Processing</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
+                <form method="POST" action="{% url 'useradmin:update-order-status' order.oid %}" class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    {% csrf_token %}
+                    <label for="status" class="pe-3">Change Order Status </label>
+                    <select name="status" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">                        
+                        <option value="processing" {% if order.product_status == "processing" %}selected{% endif %}>Processing</option>
+                        <option value="shipped" {% if order.product_status == "shipped" %}selected{% endif %}>Shipped</option>
+                        <option value="delivered" {% if order.product_status == "delivered" %}selected{% endif %}>Delivered</option>
                     </select>
-                    <a class="btn btn-primary" href="#">Save</a>
+                    <button type="submit" class="btn btn-primary" >Save</a>
                 </div>
             </div>
         </header>

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from core.models import CartOrder, Product, Category, CartOrderItem
+from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from userauths.models import User
@@ -100,3 +101,12 @@ def order_detail(request, oid):
         "items": items,
     }
     return render(request, "useradmin/order-detail.html", context)
+
+def update_order_status(request, oid):
+    order = CartOrder.objects.get(oid=oid)
+    if request.method == "POST":
+        status = request.POST.get("status")
+        order.product_status = status
+        order.save()
+        messages.success(request, f"Order status changed to {status}")
+    return redirect("useradmin:order-detail", order.oid)
