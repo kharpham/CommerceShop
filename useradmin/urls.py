@@ -29,4 +29,7 @@ urlpatterns = [
 
     # Review
     path("reviews/", views.reviews, name="reviews"),
+
+    # Settings
+    path("settings/", views.settings, name="settings"),
 ]

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from core.models import CartOrder, Product, Category, CartOrderItem, ProductReview
+from userauths.models import Profile
 from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
@@ -131,3 +132,30 @@ def reviews(request):
     }
 
     return render(request, "useradmin/reviews.html", context)
+
+def settings(request):
+    profile = Profile.objects.get(user=request.user)
+
+    if request.method == "POST":
+        image = request.FILES.get("image")
+        full_name = request.POST.get("full_name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        address = request.POST.get("address")
+        country = request.POST.get("country")
+
+        if image != None:
+            profile.image = image
+        profile.full_name = full_name
+        profile.email = email
+        profile.phone = phone
+        profile.address = address
+        profile.country = country
+        profile.save()
+        messages.success(request, "Profile updated successfully")
+        return redirect("useradmin:settings")
+    context = {
+        "profile": profile,
+    }
+    return render(request, "useradmin/settings.html", context)
+

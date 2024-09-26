@@ -38,6 +38,8 @@ class Profile(models.Model):
     bio = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=200)
     verified = models.BooleanField(default=False)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    country = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
