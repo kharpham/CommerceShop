@@ -91,8 +91,8 @@
                             <a href="page-settings-2.html">Setting sample 2</a>
                         </div>
                     </li>
-                    <li class="menu-item">
-                        <a class="menu-link" href="page-blank.html">
+                    <li class="menu-item {% if 'useradmin/change-password' in request.path %}active{% endif %}">
+                        <a class="menu-link" href="{% url 'useradmin:change-password' %}">
                             <i class="icon material-icons md-lock"></i>
                             <span class="text"> Change Password </span>
                         </a>

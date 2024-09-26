@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from core.models import CartOrder, Product, Category, CartOrderItem, ProductReview
 from userauths.models import Profile
 from django.contrib import messages
+from django.contrib.auth.hashers import check_password
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from userauths.models import User
@@ -159,3 +160,22 @@ def settings(request):
     }
     return render(request, "useradmin/settings.html", context)
 
+def change_password(request):
+    user = request.user
+    if request.method == "POST":
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if check_password(old_password, user.password):
+            if confirm_password != new_password:
+                messages.warning(request, "Passwords do not match")
+            else:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, "Passwords changed successfully")
+                return redirect("useradmin:change-password")
+        else:
+            messages.warning(request, "Old password is incorrect")
+            return redirect("useradmin:change-password")
+    return render(request, "useradmin/change-password.html")

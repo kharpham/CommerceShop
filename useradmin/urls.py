@@ -32,4 +32,7 @@ urlpatterns = [
 
     # Settings
     path("settings/", views.settings, name="settings"),
+
+    # Change password
+    path("change-password/", views.change_password, name="change-password"),
 ]
