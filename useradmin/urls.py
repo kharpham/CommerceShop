@@ -23,4 +23,10 @@ urlpatterns = [
     path("order-detail/<str:oid>", views.order_detail, name="order-detail"),
 
     path("update-order-status/<str:oid>", views.update_order_status, name="update-order-status"),
+
+    # Shop page
+    path("shop-page/", views.shop_page, name="shop-page"),
+
+    # Review
+    path("reviews/", views.reviews, name="reviews"),
 ]

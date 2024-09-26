@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from core.models import CartOrder, Product, Category, CartOrderItem
+from core.models import CartOrder, Product, Category, CartOrderItem, ProductReview
 from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
@@ -110,3 +110,24 @@ def update_order_status(request, oid):
         order.save()
         messages.success(request, f"Order status changed to {status}")
     return redirect("useradmin:order-detail", order.oid)
+
+def shop_page(request):
+    products = Product.objects.all()
+    revenue = CartOrder.objects.aggregate(price=Sum("price"))
+    total_sales = CartOrderItem.objects.aggregate(quantity=Sum("quantity"))
+
+    context = {
+        "products": products,
+        "revenue": revenue,
+        "total_sales": total_sales,
+    }
+    return render(request, "useradmin/shop-page.html", context)
+
+
+def reviews(request):
+    reviews = ProductReview.objects.all().order_by("-date")
+    context = {
+        "reviews": reviews,
+    }
+
+    return render(request, "useradmin/reviews.html", context)
