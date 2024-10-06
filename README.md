@@ -1,11 +1,12 @@
 # Nest Mart & Grocery - E-commerce Retail Web Application
 Welcome to my personal project - Nest Mart & Grocery, a web application designed for an seamless shopping experience with full functionalities from a real-world e-commerce website.
 
-## Demo Video
-You can view my app demo here
+# System design
+![Nest System Design](media/system%20design.png)
+*Nest System Design*
 
 # Database schema
-![Nest Database schema](media/schema.png)
+![Nest Database Schema](media/schema.png)
 *Nest Database schema.*
 
 # Features
